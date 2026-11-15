@@ -13,7 +13,7 @@ import axios from 'axios'
 const Home = () => {
     const dispatch = useDispatch();
     const { products, loading, error } = useSelector((state) => {
-       // console.log("home", state.products);
+        // console.log("home", state.products);
 
         return state.products
     });

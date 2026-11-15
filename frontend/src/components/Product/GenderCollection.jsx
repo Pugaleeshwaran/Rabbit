@@ -10,14 +10,14 @@ const GenderCollection = () => {
                     <img src={Womencol} alt="womens collection" className='w-full h-[600px] object-cover' />
                     <div className='absolute bottom-6 left-6 p-5 bg-opacity-70 bg-white'>
                         <h4 className=' text-2xl font-semibold'>Women's Collection</h4>
-                        <Link to={"#"} className='text-base underline'>Shop Now</Link>
+                        <Link to={"/collections/all?gender=Women"} className='text-base underline'>Shop Now</Link>
                     </div>
                 </div>
                 <div className='relative flex-1'>
                     <img src={Menscol} alt="womens collection" className='w-full h-[600px] object-cover' />
                     <div className='absolute bottom-6 left-6 p-5 bg-opacity-70 bg-white'>
                         <h4 className=' text-2xl font-semibold'>Mens's Collection</h4>
-                        <Link to={"#"} className='text-base underline'>Shop Now</Link>
+                        <Link to={'/collections/all?gender=Men'} className='text-base underline'>Shop Now</Link>
                     </div>
                 </div>
             </div>
