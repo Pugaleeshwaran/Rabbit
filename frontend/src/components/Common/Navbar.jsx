@@ -1,0 +1,81 @@
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { HiOutlineUser, HiOutlineShoppingBag } from 'react-icons/hi'
+import { HiBars3BottomRight, HiMiniXMark } from 'react-icons/hi2'
+import SearchBar from './SearchBar'
+import Carddraw from '../Layout/Carddraw'
+import { useSelector } from 'react-redux'
+const Navbar = () => {
+
+    const [opencart, setopencart] = useState(true)
+    const [mobilenav, setmobilenav] = useState(false)
+    const { cart } = useSelector((state) => state.cart);
+    const { user } = useSelector((state) => state.auth);
+
+    const cartItemCount = cart?.products?.reduce((total, product) => total + product.quantity, 0) || 0;
+    const handlecart = () => {
+        setopencart(!opencart)
+        console.log(opencart);
+
+    }
+    const handlemobilenav = () => {
+        setmobilenav(!mobilenav);
+    }
+    return (
+        <>
+            <nav className='container mx-auto flex items-center justify-between py-4 px-6 ' >
+                {/* left  */}
+                <div>
+                    <Link to={"/"} className='text-2xl font-medium'>Rabbit</Link>
+                </div>
+                {/* center */}
+                <div className='hidden md:flex space-x-6 '>
+                    <Link to={'/collections/all?gender=Men'} className="text-gray-700 hover:text-black text-sm font-medium uppercase">MEN</Link>
+                    <Link to={'/collections/all?gender=Women'} className="text-gray-700 hover:text-black text-sm font-medium uppercase">WOMEN</Link>
+                    <Link to={"/collections/all?category=Top Wear"} className="text-gray-700 hover:text-black text-sm font-medium uppercase">TOP WEAR</Link>
+                    <Link to={"/collections/all?category=Bottom Wear"} className="text-gray-700 hover:text-black text-sm font-medium uppercase">BOTTOM WEAR</Link>
+                    <Link to={"/collections/Ethnic Wear"} className="text-gray-700 hover:text-black text-sm font-medium uppercase">ETHNIC WEAR</Link>
+                </div>
+                {/* right */}
+                <div className='flex items-center  space-x-3 '>
+                    {user && user.role === "admin" && (
+                        <Link to={"/admin"} className='block bg-black py-0.5 px-3 text-white rounded'>Admin</Link>
+                    )}
+                    <Link to={"/profile"} className='hover:text-black'><HiOutlineUser className='w-6 h-6 text-gray-700' /></Link>
+                    <button onClick={handlecart} className='relative hover:text-black'>
+                        <HiOutlineShoppingBag className='w-6 h-6 text-gray-700' />
+                        {cartItemCount > 0 && (<span className='bg-rabbit-red -top-1 absolute text-white text-xs rounded-full px-2 p-0.5'>{cartItemCount}</span>)}
+
+                    </button>
+                    {/* search */}
+                    <div className='overflow-hidden '>
+                        <SearchBar />
+                    </div>
+
+                    {/* mobile respansive icon  */}
+                    <button><HiBars3BottomRight className='w-6 h-6 z-50 text-gray-700  md:hidden' onClick={handlemobilenav} /></button>
+                </div>
+            </nav>
+            <Carddraw handlecart={handlecart} opencart={opencart} />
+            {/* mobile Nav slier */}
+            <div className={` pl-3 fixed top-0 left-0 z-50 bg-white shadow-lg z-60 w-1/2 h-dvh  transform transition-transform duration-300 md:hidden ${mobilenav ? "translate-x-0" : "-translate-x-full"}`}>
+                <div className='flex justify-end p-3'>
+                    <HiMiniXMark className='text-2xl w-6 h-6 cursor-pointer text-black' onClick={handlemobilenav} />
+                </div>
+                <div>
+                    <h3 className='text-2xl font-semibold '>Menu</h3>
+                    <div className='flex flex-col gap-4 mt-5'>
+                        <Link to={'/collections/all?gender=Men'} className='"text-gray-700 hover:text-black text-sm font-medium uppercase'>MEN</Link>
+                        <Link className='"text-gray-700 hover:text-black text-sm font-medium uppercase' to={"/collections/all?gender=Women"}>WOMEN</Link>
+                        <Link className='"text-gray-700 hover:text-black text-sm font-medium uppercase' to={"/collections/all?category=Top Wear"}>TOP WEAR</Link>
+                        <Link className='"text-gray-700 hover:text-black text-sm font-medium uppercase' to={"/collections/all?category=Bottom Wear"}>BOTTOM WEAR</Link>
+                        <Link className='"text-gray-700 hover:text-black text-sm font-medium uppercase' to={"/collections/Ethnic Wear"}>ETHNIC WEAR</Link>
+
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export default Navbar
