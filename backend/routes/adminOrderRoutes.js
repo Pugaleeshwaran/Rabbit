@@ -30,9 +30,20 @@ router.put("/:id", protect, admin, async (req, res) => {
         console.log(order);
 
         if (order) {
-            order.status = req.body.status || order.status;
-            order.isDelivered = req.body.status === "Delivered" ? true : order.isDelivered;
-            order.DeliveredAt = req.body.status === "Delivered" ? Date.now() : order.DeliveredAt;
+            const newStatus = req.body.status || order.status;
+            const delivered = newStatus === "Delivered";
+
+            order.status = newStatus;
+            order.isDelivered = delivered;
+            order.DeliveredAt = delivered ? (order.DeliveredAt || Date.now()) : undefined;
+
+            // Cash on Delivery: paid only when delivered.
+            // If admin changes status back (Processing, Shipped, Cancelled) it becomes unpaid again.
+            if (order.paymentMethod === "COD") {
+                order.isPaid = delivered;
+                order.paidAt = delivered ? (order.paidAt || Date.now()) : undefined;
+                order.paymentStatus = delivered ? "paid" : "pending";
+            }
 
             const updateOrder = await order.save();
             res.json(updateOrder);

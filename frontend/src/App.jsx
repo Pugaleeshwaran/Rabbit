@@ -17,6 +17,7 @@ import AdminHome from './pages/AdminHome.jsx'
 import Usermanagement from './components/Admin/Usermanagement.jsx'
 import ProductManagement from './components/Admin/ProductManagement.jsx'
 import EditProductPage from './components/Admin/EditProductPage.jsx'
+import AddProductPage from './components/Admin/AddProductPage.jsx'
 import OrderMananage from './components/Admin/OrderMananage.jsx'
 
 import { Provider } from 'react-redux'
@@ -50,6 +51,7 @@ function App() {
             <Route index element={<AdminHome />}></Route>
             <Route path='users' element={<Usermanagement />}></Route>
             <Route path='products' element={<ProductManagement />}></Route>
+            <Route path='products/new' element={<AddProductPage />}></Route>
             <Route path='products/:id/edit' element={<EditProductPage />}></Route>
             <Route path='orders' element={<OrderMananage />}></Route>
           </Route>

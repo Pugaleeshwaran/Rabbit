@@ -58,7 +58,7 @@ const OrderConformaion = () => {
                         <div className='mb-20'>
                             {
                                 checkout.checkoutItems?.map((item, index) => {
-                               
+
 
                                     return (
                                         <>
@@ -89,7 +89,9 @@ const OrderConformaion = () => {
                             {/* payment info */}
                             <div>
                                 <h2 className='text-lg font-semibold mb-2'>Payment</h2>
-                                <p className='text-gray-600'>Paypal</p>
+                                <p className='text-gray-600'>
+                                    {checkout.paymentMethod === "COD" ? "Cash on Delivery (pay when you receive it)" : "PayPal"}
+                                </p>
                             </div>
                             {/* delivery Info */}
 

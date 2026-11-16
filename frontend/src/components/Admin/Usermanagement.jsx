@@ -57,7 +57,7 @@ const Usermanagement = () => {
         }
     }
     return (
-        <div className='max-w-7xl mx-auto p-6' >
+        <div className='max-w-7xl mx-auto p-0 md:p-6'>
             <h2 className='text-2xl font-bold mb-6'>User Management</h2>
             {loading && <p>Loading...</p>}
             {error && <p>error: {error}...</p>}
@@ -112,7 +112,7 @@ const Usermanagement = () => {
                     <thead className='bg-gray-100 text-xs uppercase text-gray-700'>
                         <tr>
                             <th className='py-3 px-4'>Name</th>
-                            <th className='py-3 px-4'>Email</th>
+                            <th className='py-3 px-4 hidden md:table-cell'>Email</th>
                             <th className='py-3 px-4'>Role</th>
                             <th className='py-3 px-4'>Actions</th>
                         </tr>
@@ -122,11 +122,12 @@ const Usermanagement = () => {
                             users.map((user) => {
                                 return (
                                     <tr key={user._id} className='border-b hover:bg-gray-50'>
-                                        <td className='p-4 font-medium text-gray-900 whitespace-nowrap'>
+                                        <td className='p-3 md:p-4 font-medium text-gray-900 md:whitespace-nowrap'>
                                             {user.name}
+                                            <p className='md:hidden text-xs font-normal text-gray-500 mt-1 break-all'>{user.mail}</p>
                                         </td>
-                                        <td className='p-4'>{user.mail}</td>
-                                        <td className='p-4'>
+                                        <td className='p-4 hidden md:table-cell'>{user.mail}</td>
+                                        <td className='p-2 md:p-4'>
                                             <select value={user.role}
                                                 onChange={(e) => handleRoleChange(user._id, e.target.value)}
                                                 className='p-2 border rounded'>
@@ -134,9 +135,9 @@ const Usermanagement = () => {
                                                 <option value="admin">Admin</option>
                                             </select>
                                         </td>
-                                        <td className='p-4'>
+                                        <td className='p-2 md:p-4'>
                                             <button onClick={() => handleDeleteUser(user._id)}
-                                                className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'>
+                                                className='bg-red-500 text-white px-3 md:px-4 py-2 rounded hover:bg-red-600'>
                                                 Delete
                                             </button>
                                         </td>

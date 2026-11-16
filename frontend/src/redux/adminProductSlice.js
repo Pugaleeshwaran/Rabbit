@@ -18,16 +18,32 @@ export const fetchAdminProducts = createAsyncThunk(
 );
 
 //async function to create a new products
+// export const createProduct = createAsyncThunk(
+//     "adminProducts/createProduct", async (productDate) => {
+//         const response = axios.post(`${API_URL}/api/products`,
+//             productDate, {
+//             headers: {
+//                 Authorization: USER_TOKEN,
+//             },
+//         }
+//         );
+//         return response.data;
+//     }
+// );
+
 export const createProduct = createAsyncThunk(
-    "adminProducts/createProduct", async (productDate) => {
-        const response = axios.post(`${API_URL}/api/products`,
-            productDate, {
-            headers: {
-                Authorization: USER_TOKEN,
-            },
+    "adminProducts/createProduct", async (productData, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`${API_URL}/api/products`, productData, {
+                headers: {
+                    // read the token now, so it works right after login
+                    Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || { message: error.message });
         }
-        );
-        return response.data;
     }
 );
 

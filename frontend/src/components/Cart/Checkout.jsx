@@ -21,6 +21,8 @@ const Checkout = () => {
         phone: "",
     })
     const [checkOutId, setcheckoutId] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState("Paypal"); // "Paypal" or "COD"
+    const [placingOrder, setPlacingOrder] = useState(false);
 
     //Ensure cart is loaded before Processing
     useEffect(() => {
@@ -32,17 +34,26 @@ const Checkout = () => {
     const handleCreateCheckout = async (e) => {
         e.preventDefault();
         if (cart && cart.products.length > 0) {
+            setPlacingOrder(true);
             const res = await dispatch(
                 createCheckout({
                     checkoutItems: cart.products,
                     shippingAddress,
-                    paymentMethod: "Paypal",
+                    paymentMethod,
                     totalPrice: cart.totalPrice,
                 })
             );
             if (res.payload && res.payload._id) {
-                setcheckoutId(res.payload._id); //set Checkout Id if checkout was sucessfully
+                if (paymentMethod === "COD") {
+                    // No online payment: turn the checkout into an order right away
+                    await handleFinalizeCheckout(res.payload._id);
+                } else {
+                    setcheckoutId(res.payload._id); // show the PayPal button
+                }
+            } else {
+                alert("Could not place your order. Please try again.");
             }
+            setPlacingOrder(false);
         }
     }
 
@@ -76,7 +87,7 @@ const Checkout = () => {
             navigate("/order-conformation")
         } catch (error) {
             console.error(error);
-
+            alert("Could not place your order. Please try again.");
         }
     };
     if (loading) return <p>Loading Cart...</p>
@@ -150,13 +161,45 @@ const Checkout = () => {
                             required
                             value={shippingAddress.phone}
                             onChange={(e) => { setShippingAddress({ ...shippingAddress, phone: e.target.value }) }} className='w-full p-2 border rounded mb-3' type="number" />
+                        <h3 className='text-lg mb-3 mt-2'>Payment Method</h3>
+                        <div className='mb-4 space-y-2'>
+                            <label className='flex items-center gap-2 border rounded p-3 cursor-pointer'>
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="Paypal"
+                                    checked={paymentMethod === "Paypal"}
+                                    disabled={!!checkOutId}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                />
+                                PayPal
+                            </label>
+                            <label className='flex items-center gap-2 border rounded p-3 cursor-pointer'>
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="COD"
+                                    checked={paymentMethod === "COD"}
+                                    disabled={!!checkOutId}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                />
+                                Cash on Delivery
+                            </label>
+                        </div>
                         {
-                            !checkOutId ? (<button type='submit' className='bg-black text-white p-3 w-full rounded-md'>Continue to Payment </button>) :
-                                (
-                                    <div>
-                                        <h2 className='text-lg my-4 text-center font-semibold'>Pay With Paypal</h2>
-                                        <Paypalbtn amount={cart.totalPrice} onSucess={handleSucess} onError={(err) => alert("payment Faild ! please try again")} /></div>
-                                )}
+                            !checkOutId ? (
+                                <button type='submit' disabled={placingOrder} className='bg-black text-white p-3 w-full rounded-md disabled:opacity-50'>
+                                    {paymentMethod === "COD"
+                                        ? (placingOrder ? "Placing Order..." : "Place Order (Cash on Delivery)")
+                                        : "Continue to Payment"}
+                                </button>
+                            ) : (
+                                <div>
+                                    <h2 className='text-lg my-4 text-center font-semibold'>Pay With Paypal</h2>
+                                    <Paypalbtn amount={cart.totalPrice} onSucess={handleSucess} onError={(err) => alert("payment Faild ! please try again")} />
+                                </div>
+                            )
+                        }
 
                     </div>
                 </form>

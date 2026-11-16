@@ -1,6 +1,14 @@
+// Load .env before anything else so every file can read process.env
+require("dotenv").config();
+
+// Optional: some networks (e.g. Windows Mobile Hotspot) break Node's DNS lookup
+// for mongodb+srv:// URIs. Set DNS_SERVERS in .env only on machines that need it.
+if (process.env.DNS_SERVERS) {
+    require("dns").setServers(process.env.DNS_SERVERS.split(",").map((s) => s.trim()));
+}
+
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const app = express();
 const connectDb = require('./config/db');
 const userRoutes = require('./routes/UserRoutes');
@@ -17,8 +25,6 @@ const adminOrderoutes = require("./routes/adminOrderRoutes");
 app.use(cors())
 app.use(express.json())
 
-
-dotenv.config()
 console.log(process.env.PORT);
 
 

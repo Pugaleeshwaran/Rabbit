@@ -16,6 +16,10 @@ router.post("/", protect, async (req, res) => {
     if (!checkoutItems || checkoutItems.length === 0) {
         return res.status(400).json({ message: "No item in checkout" });
     }
+    // Only allow payment methods we support
+    if (!["Paypal", "COD"].includes(paymentMethod)) {
+        return res.status(400).json({ message: "Invalid payment method" });
+    }
     try {
         //create a new checkout session
         const newCheckout = await Checkout.create({
@@ -80,7 +84,10 @@ router.post("/:id/finalize", protect, async (req, res) => {
             return res.status(404).json({ message: "Checkout not found" })
         }
 
-        if (checkout.isPaid && !checkout.isFinalized) {
+        // PayPal must be paid first. COD is paid later, at delivery.
+        const canFinalize = checkout.isPaid || checkout.paymentMethod === "COD";
+
+        if (canFinalize && !checkout.isFinalized) {
             // create final order based on checkout details
             const finalOrder = await Order.create({
                 user: checkout.user,
@@ -88,10 +95,10 @@ router.post("/:id/finalize", protect, async (req, res) => {
                 shippingAddress: checkout.shippingAddress,
                 paymentMethod: checkout.paymentMethod,
                 totalPrice: checkout.totalPrice,
-                isPaid: true,
+                isPaid: checkout.isPaid,
                 paidAt: checkout.paidAt,
                 isDelivered: false,
-                paymentStatus: "paid",
+                paymentStatus: checkout.isPaid ? "paid" : "pending",
                 paymentDetails: checkout.paymentDetails,
             });
 
