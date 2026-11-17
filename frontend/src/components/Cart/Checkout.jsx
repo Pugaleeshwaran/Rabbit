@@ -24,6 +24,11 @@ const Checkout = () => {
     const [paymentMethod, setPaymentMethod] = useState("Paypal"); // "Paypal" or "COD"
     const [placingOrder, setPlacingOrder] = useState(false);
 
+    const handlePaymentChange = (e) => {
+        setPaymentMethod(e.target.value);
+        setcheckoutId(null); // hide PayPal buttons and show the "Place Order" button again
+    };
+
     //Ensure cart is loaded before Processing
     useEffect(() => {
         if (!cart || !cart.products || cart.products.length === 0) {
@@ -169,8 +174,7 @@ const Checkout = () => {
                                     name="paymentMethod"
                                     value="Paypal"
                                     checked={paymentMethod === "Paypal"}
-                                    disabled={!!checkOutId}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                    onChange={handlePaymentChange}
                                 />
                                 PayPal
                             </label>
@@ -180,8 +184,7 @@ const Checkout = () => {
                                     name="paymentMethod"
                                     value="COD"
                                     checked={paymentMethod === "COD"}
-                                    disabled={!!checkOutId}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                    onChange={handlePaymentChange}
                                 />
                                 Cash on Delivery
                             </label>
