@@ -3,7 +3,7 @@ import { FaFilter } from 'react-icons/fa6';
 import Filter from '../components/Product/Filter';
 import SortItem from '../components/Product/SortItem';
 import ProductGrid from '../components/Product/ProductGrid';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductsByFilters } from '../redux/productsSlice';
 
@@ -59,7 +59,20 @@ const Collection = () => {
                     <SortItem />
                 </div>
 
-                <ProductGrid products={products} loading={loading} error={error} />
+                {!loading && !error && products.length === 0 ? (
+                    <div className='flex flex-col items-center justify-center text-center py-20'>
+                        <p className='text-xl font-semibold text-gray-800'>No products found</p>
+                        <p className='text-gray-500 mt-2'>
+                            We couldn't find any products matching your filters. Try changing or removing some filters.
+                        </p>
+                        <Link to='/collections/all'
+                            className='mt-6 bg-black text-white px-6 py-2 rounded hover:bg-gray-800'>
+                            Clear all filters
+                        </Link>
+                    </div>
+                ) : (
+                    <ProductGrid products={products} loading={loading} error={error} />
+                )}
             </div>
         </div>
     )
